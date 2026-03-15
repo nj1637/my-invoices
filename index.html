@@ -420,6 +420,15 @@
         .ledger-credit { color: #dc2626; font-weight: 600; }
         .ledger-debit { color: #059669; font-weight: 600; }
     </style>
+
+<script>
+// Ensure all tab-contents start hidden and dashboard shows
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.tab-content').forEach(function(el) {
+        el.style.display = 'none';
+    });
+});
+</script>
 </head>
 <body>
 
@@ -557,7 +566,7 @@
                         <div style="font-size:11px;font-weight:600;color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="user-id-display">...</div>
                         <div style="font-size:9px;color:#10b981;font-weight:600;text-transform:uppercase;letter-spacing:0.06em">Active</div>
                     </div>
-                    <button onclick="window.handleSignOut()" title="Sign Out" style="margin-left:auto;padding:6px;border-radius:8px;background:transparent;border:none;cursor:pointer;color:#475569;transition:all 0.15s" onmouseover="this.style.background='rgba(239,68,68,0.1)';this.style.color='#ef4444'" onmouseout="this.style.background='transparent';this.style.color='#475569'">
+                    <button onclick="window.handleLogout()" title="Sign Out" style="margin-left:auto;padding:6px;border-radius:8px;background:transparent;border:none;cursor:pointer;color:#475569;transition:all 0.15s" onmouseover="this.style.background='rgba(239,68,68,0.1)';this.style.color='#ef4444'" onmouseout="this.style.background='transparent';this.style.color='#475569'">
                         <i data-lucide="log-out" style="width:15px;height:15px"></i>
                     </button>
                 </div>
@@ -1493,108 +1502,15 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl">
                         
                         <!-- Modular Toggles -->
-                        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 space-y-4 col-span-1 md:col-span-2">
-                            <div class="flex justify-between items-center border-b pb-2 mb-2">
-                                <h3 class="font-bold text-slate-800 flex items-center gap-2"><i data-lucide="toggle-right" class="w-5 h-5 text-emerald-600"></i> Module & Feature Toggles</h3>
-                                <!-- Feature: Recycle Bin Opener -->
-                                <button onclick="window.openTrashModal()" class="px-3 py-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg text-xs font-bold flex items-center gap-1 transition-all"><i data-lucide="trash-2" class="w-3 h-3"></i> Open Recycle Bin</button>
-                            </div>
-                            <p class="text-xs text-slate-500 mb-4">Enable or disable advanced ERP features to keep your interface clean and strictly tailored to your workflow.</p>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm font-medium text-slate-700" id="feature-toggles-container">
-                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="feat-expenses" class="w-4 h-4 text-emerald-600 rounded"> Expense Tracking Module</label>
-                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="feat-multiDoc" class="w-4 h-4 text-emerald-600 rounded"> Proformas & Quotations</label>
-                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="feat-currency" class="w-4 h-4 text-emerald-600 rounded"> Multi-Currency Billing</label>
-                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="feat-shipping" class="w-4 h-4 text-emerald-600 rounded"> Adv. Shipping & PO Fields</label>
-                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="feat-tds" class="w-4 h-4 text-emerald-600 rounded"> TDS Deduction %</label>
-                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="feat-rcm" class="w-4 h-4 text-emerald-600 rounded"> Reverse Charge (RCM)</label>
-                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="feat-hsn" class="w-4 h-4 text-emerald-600 rounded"> HSN/SAC Codes</label>
-                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="feat-dueDate" class="w-4 h-4 text-emerald-600 rounded"> Invoice Due Dates</label>
-                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="feat-ledger" class="w-4 h-4 text-emerald-600 rounded"> Client Ledger / Statement</label>
-                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="feat-creditNote" class="w-4 h-4 text-emerald-600 rounded"> Credit Notes & Refunds</label>
-                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="feat-margin" class="w-4 h-4 text-emerald-600 rounded"> Profit Margin Calculator</label>
-                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="feat-batch" class="w-4 h-4 text-emerald-600 rounded"> Batch & Expiry Tracking</label>
-                                <!-- New Feature Toggles -->
-                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="feat-deleteBtn" class="w-4 h-4 text-red-600 rounded border-red-300"> Allow Deletion (Recycle Bin)</label>
-                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="feat-stamp" class="w-4 h-4 text-emerald-600 rounded"> Show Company Seal on PDFs</label>
-                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="feat-returnStock" class="w-4 h-4 text-emerald-600 rounded"> Auto-Return Stock on Delete</label>
-                            </div>
-                        </div>
-
-                        <!-- NEW FEATURE: Keyboard Shortcuts Configuration -->
-                        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 space-y-4 col-span-1 md:col-span-2">
-                            <div class="flex justify-between items-center border-b pb-2 mb-2">
-                                <h3 class="font-bold text-slate-800 flex items-center gap-2"><i data-lucide="keyboard" class="w-5 h-5 text-emerald-600"></i> Keyboard Shortcuts (Hotkeys)</h3>
-                                <div class="flex items-center gap-2">
-                                    <input type="checkbox" id="set-shortcuts-master" class="w-5 h-5 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500" onchange="window.toggleMasterShortcuts(this.checked)">
-                                    <label for="set-shortcuts-master" class="text-sm font-bold text-slate-700">Enable Global Shortcuts</label>
-                                </div>
-                            </div>
-                            <p class="text-xs text-slate-500 mb-4">Use <strong>Alt + Key</strong> to perform fast actions across the app. Toggle individual shortcuts below if they interfere with your browser.</p>
-                            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3 text-sm font-medium text-slate-700" id="shortcuts-toggles-container">
-                                <!-- Populated dynamically by JS -->
-                            </div>
-                        </div>
-
-                        <!-- Security & Advanced Configs -->
-                        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 space-y-4 col-span-1 md:col-span-2 flex flex-col md:flex-row gap-6">
-                            <div class="flex-1">
-                                <h3 class="font-bold text-slate-800 border-b pb-2 flex items-center gap-2"><i data-lucide="lock" class="w-5 h-5 text-emerald-600"></i> App Security & Web Lock</h3>
-                                <div class="flex items-center gap-3 mt-4">
-                                    <input type="checkbox" id="set-pin-enable" class="w-5 h-5 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500" onchange="window.togglePinFields(this.checked)">
-                                    <label for="set-pin-enable" class="text-sm font-bold text-slate-700">Enable 4-Digit Web Lock (PIN on Startup)</label>
-                                </div>
-                                <div id="pin-fields" class="grid grid-cols-1 md:grid-cols-2 gap-4 hidden bg-slate-50 p-4 rounded-xl border border-slate-200 mt-4">
-                                    <div>
-                                        <label class="text-sm font-medium text-slate-700 block mb-1">Current PIN <span class="text-xs text-slate-400 font-normal">(Leave blank if new)</span></label>
-                                        <div class="relative">
-                                            <input type="password" id="set-pin-current" maxlength="4" class="w-full pl-4 pr-12 py-2 rounded-xl border border-slate-200 outline-none tracking-widest text-center text-lg">
-                                            <div class="absolute right-4 top-1/2 -translate-y-1/2 password-toggle" onclick="togglePasswordVisibility('set-pin-current', this)">
-                                                <i data-lucide="eye" class="w-5 h-5"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label class="text-sm font-medium text-slate-700 block mb-1">New 4-Digit PIN</label>
-                                        <div class="relative">
-                                            <input type="password" id="set-pin-new" maxlength="4" class="w-full pl-4 pr-12 py-2 rounded-xl border border-slate-200 outline-none tracking-widest text-center text-lg">
-                                            <div class="absolute right-4 top-1/2 -translate-y-1/2 password-toggle" onclick="togglePasswordVisibility('set-pin-new', this)">
-                                                <i data-lucide="eye" class="w-5 h-5"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex-1 space-y-4">
-                                <div>
-                                    <h3 class="font-bold text-slate-800 border-b pb-2 flex items-center gap-2"><i data-lucide="calendar" class="w-5 h-5 text-emerald-600"></i> Financial Year Data Lock</h3>
-                                    <p class="text-xs text-slate-500 mt-2 mb-2">Prevent modifications to invoices & expenses logged before this date.</p>
-                                    <div><input type="date" id="set-lock-date" class="form-input"></div>
-                                </div>
-                                <!-- Feature: Net Profit Formula -->
-                                <div>
-                                    <h3 class="font-bold text-slate-800 border-b pb-2 flex items-center gap-2"><i data-lucide="calculator" class="w-5 h-5 text-emerald-600"></i> Net Profit Formula Base</h3>
-                                    <p class="text-[11px] text-slate-500 mt-2 mb-2">Select the formula logic used to calculate Net Profit on your main Dashboard.</p>
-                                    <select id="set-profit-formula" class="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none bg-white text-sm">
-                                        <option value="standard">Formula 1: Standard (Total Revenue - Total Expenses)</option>
-                                        <option value="net_tax">Formula 2: Net of Tax (Revenue minus Output Tax - Expenses minus Input Tax)</option>
-                                        <option value="gross">Formula 3: Gross Profit Only (Total Revenue - COGS)</option>
-                                        <option value="operating">Formula 4: Operating Profit (Gross Profit - Total Expenses)</option>
-                                        <option value="cash">Formula 5: Cash Basis (Paid Revenue - Paid Expenses)</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
                         
                 </div>
 
-            </div>
         
 </main>
         </div>
 
         <!-- Mobile Bottom Nav -->
-        <nav class="md:hidden" id="mobile-nav-bar"></nav>
+        <nav id="mobile-nav-bar" style="position:fixed;bottom:0;left:0;right:0;background:rgba(13,17,23,0.97);border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-around;padding:8px 0 12px;z-index:30;backdrop-filter:blur(20px)"></nav>
     </div>
 
     <!-- Modals -->
@@ -1993,7 +1909,7 @@
                 if (user) {
                     window.AppState.user = user;
                     const authC = document.getElementById('auth-container'); if(authC) authC.style.display = 'none';
-                    const appC = document.getElementById('app-container'); if(appC) appC.style.display = 'flex';
+                    const appC = document.getElementById('app-container'); if(appC) { appC.style.display = 'flex'; appC.style.flexDirection = window.innerWidth < 769 ? 'column' : 'row'; }
                     setText('user-id-display', user.email || user.uid);
                     
                     const savedDraft = localStorage.getItem('ayur_draft_pro');
@@ -2253,16 +2169,33 @@
                 const mBtn = document.createElement('button');
                 mBtn.className = 'mobile-nav-item' + (isActive ? ' active' : '');
                 mBtn.innerHTML = `<i data-lucide="${item.icon}"></i><span>${item.label}</span>${lowStockCount > 0 && item.id === 'inventory' ? '<div style="position:absolute;top:4px;right:8px;width:8px;height:8px;background:#ef4444;border-radius:50%;border:2px solid white"></div>' : ''}`;
-                mBtn.onclick = () => switchTab(item.id); mobileNav.appendChild(mBtn);
+                mBtn.onclick = function() { 
+                    window.switchTab(item.id);
+                    // close mobile sidebar if open
+                    var sb = document.getElementById('app-sidebar');
+                    var ov = document.getElementById('mobile-sidebar-overlay');
+                    if (sb && sb.classList.contains('mobile-open')) {
+                        sb.classList.remove('mobile-open');
+                        if(ov) ov.style.display = 'none';
+                        document.body.style.overflow = '';
+                    }
+                };
+                mobileNav.appendChild(mBtn);
             });
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
         window.switchTab = function(tabId) {
             window.AppState.activeTab = tabId;
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.remove('active');
+                el.style.display = 'none';
+            });
             const view = document.getElementById(`view-${tabId}`);
-            if(view) view.classList.add('active');
+            if(view) {
+                view.classList.add('active');
+                view.style.display = 'block';
+            }
             
             renderNavigation(); window.applyFeatureVisibility();
             
@@ -2276,6 +2209,10 @@
             if(tabId === 'settings') window.populateSettingsUI();
             
             window.scrollTo(0,0);
+            // Update topbar title
+            const _titles = {dashboard:'Dashboard',daybook:'Daybook',invoice:'New Invoice',records:'Sales Records',inventory:'Inventory',expenses:'Expenses',clients:'Clients',settings:'Settings'};
+            const _ttEl = document.getElementById('topbar-title');
+            if (_ttEl) _ttEl.textContent = _titles[tabId] || tabId;
         }
 
         window.updateDashboard = function() {
@@ -3739,13 +3676,6 @@ window.addEventListener('resize', function() {
     var ac = document.getElementById('app-container');
     if (ac && ac.style.display !== 'none') {
         ac.style.flexDirection = window.innerWidth < 769 ? 'column' : 'row';
-    }
-});
-// Fix app-container display on load
-document.addEventListener('DOMContentLoaded', function() {
-    var ac = document.getElementById('app-container');
-    if (ac && ac.style.display !== 'none') {
-        ac.style.display = 'flex';
     }
 });
 </script>
