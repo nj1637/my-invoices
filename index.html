@@ -357,27 +357,37 @@
 
         /* ── MOBILE FIXES ── */
         @media (max-width: 768px) {
-            #app-container { display: flex !important; flex-direction: column !important; }
+            #app-container { display: flex !important; flex-direction: column !important; height:100vh !important; }
             #main-scroll { padding: 12px 12px 80px !important; }
-            .topbar { display: none !important; }
             .stat-card-value { font-size: 18px !important; }
             .invoice-summary-panel { position: relative !important; top: auto !important; }
-            /* Tables scroll on mobile */
-            table { min-width: 600px; }
-            .table-scroll-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-            /* Modal full screen on mobile */
-            #add-product-form > div,
-            #edit-client-form > div { max-height: 100vh !important; border-radius: 16px 16px 0 0 !important; margin-top: auto !important; }
-            #add-product-form,
-            #edit-client-form { align-items: flex-end !important; padding: 0 !important; }
-            /* Invoice grid stack on mobile */
-            .invoice-grid { grid-template-columns: 1fr !important; }
-            /* Settings grid full width */
+            table { min-width: 500px; }
             #settings-cards-grid { grid-template-columns: 1fr !important; }
+            .invoice-grid { grid-template-columns: 1fr !important; }
+            /* Modal bottom sheet on mobile */
+            #add-product-form > div { max-height: 90vh !important; border-radius: 20px 20px 0 0 !important; }
+            #add-product-form { align-items: flex-end !important; padding: 0 !important; }
+            #edit-client-form > div { max-height: 90vh !important; border-radius: 20px 20px 0 0 !important; }
+            #edit-client-form { align-items: flex-end !important; padding: 0 !important; }
         }
         @media (min-width: 769px) {
             #mobile-nav-bar { display: none !important; }
             #app-sidebar { display: flex !important; }
+            #mobile-menu-btn { display: none !important; }
+            #mobile-sidebar-overlay { display: none !important; }
+        }
+        /* Mobile Sidebar Overlay */
+        #mobile-sidebar-overlay {
+            position: fixed; inset: 0; z-index: 50;
+            background: rgba(0,0,0,0.5);
+            display: none;
+        }
+        #app-sidebar.mobile-open {
+            position: fixed !important;
+            top: 0; left: 0; bottom: 0;
+            z-index: 60;
+            display: flex !important;
+            width: 260px;
         }
         /* ── AUTOSAVE DOT ── */
         @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
@@ -501,7 +511,7 @@
     </div>
 
     <!-- Main App -->
-    <div id="app-container" class="w-full h-full" style="display:none;flex-direction:row">
+    <div id="app-container" style="display:none;width:100%;height:100%;flex-direction:row">
 
         <!-- PIN Lock -->
         <div id="pin-lock-screen" class="fixed inset-0 z-[100] hidden flex-col items-center justify-center" style="background:rgba(13,17,23,0.92)">
@@ -521,7 +531,7 @@
         </div>
 
         <!-- Dark Sidebar -->
-        <div id="app-sidebar" class="hidden md:flex flex-col">
+        <div id="app-sidebar" class="md:flex flex-col" style="display:none">
             <!-- Logo -->
             <div class="sidebar-logo">
                 <div style="display:flex;align-items:center;gap:12px">
@@ -557,7 +567,10 @@
         <!-- Main Content -->
         <div style="flex:1;display:flex;flex-direction:column;min-width:0;height:100vh;overflow:hidden">
             <!-- Topbar -->
-            <div class="topbar md:flex hidden">
+            <div class="topbar" style="display:flex">
+                <button id="mobile-menu-btn" class="md:hidden" onclick="toggleMobileSidebar()" style="width:36px;height:36px;border-radius:10px;background:#f1f5f9;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-right:12px;flex-shrink:0">
+                    <i data-lucide="menu" style="width:18px;height:18px;color:#374151"></i>
+                </button>
                 <div>
                     <div class="topbar-title" id="topbar-title">Dashboard</div>
                 </div>
@@ -578,10 +591,12 @@
             <!-- Scrollable content area -->
             <main style="flex:1;overflow-y:auto;padding:16px;padding-bottom:80px" class="md:pb-6 scroll-smooth" id="main-scroll">
 
+            
             <div style="max-width:1280px;margin:0 auto;width:100%">
-                
-                <!-- Dashboard View -->
+
+                <!-- DASHBOARD VIEW -->
                 <div id="view-dashboard" class="tab-content w-full">
+
                     <div class="mb-6">
                         <div class="flex justify-between items-end flex-wrap gap-4">
                             <div>
@@ -665,11 +680,12 @@
                             <div id="dash-top-sellers" class="space-y-2 overflow-y-auto pr-2 hide-scrollbar flex-1"></div>
                         </div>
                     </div>
+                
                 </div>
 
-                
-<!-- Daybook / General Journal View -->
+                <!-- DAYBOOK VIEW -->
                 <div id="view-daybook" class="tab-content w-full">
+
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-6">
                         <div>
                             <h2 class="text-xl font-bold text-slate-900">Daybook & General Journal</h2>
@@ -678,6 +694,8 @@
                         <div class="flex gap-2">
                             <input type="date" id="daybook-date" onchange="window.renderDaybook()" class="px-4 py-2 rounded-xl border border-slate-200 text-sm outline-none focus:border-emerald-500 shadow-sm bg-white">
                         </div>
+                    
+
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                         <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
@@ -703,12 +721,15 @@
                             </table>
                         </div>
                     </div>
+                
                 </div>
 
                 
                 </div>
-<!-- Smart Invoice Engine -->
+
+<!-- INVOICE VIEW -->
                 <div id="view-invoice" class="tab-content w-full">
+
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-6">
                         <div>
                             <h2 class="text-xl font-bold text-slate-900">Advanced Billing Engine</h2>
@@ -831,12 +852,12 @@
                             </div>
                         </div>
                     </div>
-                </div>
-
                 
                 </div>
-<!-- Purchases & Expenses View -->
+
+                <!-- EXPENSES VIEW -->
                 <div id="view-expenses" class="tab-content w-full">
+
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-6">
                         <div class="w-full md:w-auto">
                             <h2 class="text-xl font-bold text-slate-900">Purchases & Expenses</h2>
@@ -879,12 +900,12 @@
                             </table>
                         </div>
                     </div>
-                </div>
-
                 
                 </div>
-<!-- Inventory View -->
+
+                <!-- INVENTORY VIEW -->
                 <div id="view-inventory" class="tab-content w-full">
+
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-6">
                         <div class="w-full md:w-auto">
                             <h2 class="text-xl font-bold text-slate-900">Product Manager</h2>
@@ -1029,12 +1050,12 @@
                 </div
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="inventory-list"></div>
-                </div>
-
                 
                 </div>
-<!-- Records View -->
+
+                <!-- RECORDS VIEW -->
                 <div id="view-records" class="tab-content w-full">
+
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-6">
                         <div>
                             <h2 class="text-xl font-bold text-slate-900">Sales Records & Credit Notes</h2>
@@ -1076,12 +1097,12 @@
                             </table>
                         </div>
                     </div>
-                </div>
-
                 
                 </div>
-<!-- Clients View -->
+
+                <!-- CLIENTS VIEW -->
                 <div id="view-clients" class="tab-content w-full">
+
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-6">
                         <div class="w-full md:w-auto">
                             <h2 class="text-xl font-bold text-slate-900">Client CRM & Ledgers</h2>
@@ -1206,12 +1227,12 @@
                         </div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="clients-list"></div>
-                </div>
-
                 
                 </div>
-<!-- Settings View -->
+
+                <!-- SETTINGS VIEW -->
                 <div id="view-settings" class="tab-content w-full">
+
 
                     <!-- Settings Header - Business Profile Card -->
                     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:24px">
@@ -1566,14 +1587,9 @@
 
                         
                 </div>
-Save All Settings</button>
-                        
-                    </div>
-                </div>
+
             </div>
         
-            
-                </div>
 </main>
         </div>
 
@@ -3693,6 +3709,45 @@ var fixModals = setInterval(function() {
 }, 400);
 
 })();
+</script>
+
+
+<div id="mobile-sidebar-overlay" onclick="toggleMobileSidebar()"></div>
+<script>
+function toggleMobileSidebar() {
+    var sidebar = document.getElementById('app-sidebar');
+    var overlay = document.getElementById('mobile-sidebar-overlay');
+    var isOpen = sidebar.classList.contains('mobile-open');
+    if (isOpen) {
+        sidebar.classList.remove('mobile-open');
+        overlay.style.display = 'none';
+        document.body.style.overflow = '';
+    } else {
+        sidebar.classList.add('mobile-open');
+        overlay.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+}
+// Close sidebar on nav item click (mobile)
+document.addEventListener('click', function(e) {
+    var navItem = e.target.closest('.sidebar-nav-item');
+    if (navItem && window.innerWidth < 769) {
+        toggleMobileSidebar();
+    }
+});
+window.addEventListener('resize', function() {
+    var ac = document.getElementById('app-container');
+    if (ac && ac.style.display !== 'none') {
+        ac.style.flexDirection = window.innerWidth < 769 ? 'column' : 'row';
+    }
+});
+// Fix app-container display on load
+document.addEventListener('DOMContentLoaded', function() {
+    var ac = document.getElementById('app-container');
+    if (ac && ac.style.display !== 'none') {
+        ac.style.display = 'flex';
+    }
+});
 </script>
 
 </body>
