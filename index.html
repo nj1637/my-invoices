@@ -267,19 +267,44 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#f0f2f5;color:#0f172a
 <body>
 
 <!-- SPLASH -->
-<div id="splash" class="fixed inset-0 z-[300] flex flex-col items-center justify-center transition-opacity duration-500">
-  <div class="flex flex-col items-center gap-4">
-    <div class="w-20 h-20 bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center shadow-2xl">
-      <i data-lucide="leaf" class="w-10 h-10 text-emerald-400"></i>
+<div id="splash" class="fixed inset-0 z-[300] flex flex-col items-center justify-center" style="background:linear-gradient(135deg,#064e3b 0%,#0d1117 60%,#065f46 100%)">
+  <style>
+    @keyframes splashPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(16,185,129,.4)}50%{transform:scale(1.06);box-shadow:0 0 0 18px rgba(16,185,129,0)}}
+    @keyframes splashLeaf{0%{transform:rotate(-15deg) scale(.7);opacity:0}60%{transform:rotate(8deg) scale(1.1)}100%{transform:rotate(0deg) scale(1);opacity:1}}
+    @keyframes splashFadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes splashTypewriter{from{width:0}to{width:100%}}
+    @keyframes splashBlink{0%,100%{border-color:transparent}50%{border-color:#10b981}}
+    @keyframes splashRing{0%{transform:scale(.8);opacity:0}100%{transform:scale(1.5);opacity:0}}
+    .splash-logo-wrap{animation:splashPulse 2.4s ease-in-out infinite}
+    .splash-leaf{animation:splashLeaf .7s cubic-bezier(.34,1.56,.64,1) .2s both}
+    .splash-title{overflow:hidden;white-space:nowrap;border-right:2px solid #10b981;animation:splashTypewriter .8s steps(14,end) .9s both,splashBlink .6s step-end 1.7s 3}
+    .splash-sub{animation:splashFadeUp .5s ease .9s both}
+    .splash-bar-inner{animation:splashBar 2.5s ease .4s both}
+    @keyframes splashBar{from{width:0}to{width:100%}}
+    .splash-ring{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(16,185,129,.5);animation:splashRing 1.8s ease-out .3s infinite}
+  </style>
+  <div class="flex flex-col items-center gap-5">
+    <!-- Logo -->
+    <div class="relative">
+      <div class="splash-ring"></div>
+      <div class="splash-logo-wrap w-24 h-24 bg-white/10 border-2 border-emerald-500/40 rounded-3xl flex items-center justify-center shadow-2xl relative z-10">
+        <i data-lucide="leaf" class="splash-leaf w-12 h-12 text-emerald-400"></i>
+      </div>
     </div>
+    <!-- Title -->
     <div class="text-center">
-      <h1 class="text-3xl font-bold text-white tracking-tight">My Business </h1>
-      <p class="text-emerald-400 text-xs font-bold uppercase tracking-widest mt-1">Professional ERP</p>
+      <h1 class="splash-title text-4xl font-black text-white tracking-tight" style="font-family:'Plus Jakarta Sans',sans-serif">My Business</h1>
+      <p class="splash-sub text-emerald-400 text-[11px] font-bold uppercase tracking-[.25em] mt-2">Professional ERP System</p>
     </div>
+    <!-- Progress bar -->
+    <div class="w-48 h-1 bg-white/10 rounded-full overflow-hidden mt-2">
+      <div class="splash-bar-inner h-full bg-gradient-to-r from-emerald-500 to-emerald-300 rounded-full"></div>
+    </div>
+    <span class="text-emerald-600 text-[11px] font-medium tracking-wider">Initializing...</span>
   </div>
-  <div class="absolute bottom-10 flex flex-col items-center gap-2">
-    <i data-lucide="loader-2" class="w-5 h-5 text-emerald-400 animate-spin"></i>
-    <span class="text-emerald-500 text-xs">Loading...</span>
+  <!-- Version badge -->
+  <div class="absolute bottom-8 text-center">
+    <span class="text-white/20 text-[10px] font-medium tracking-widest uppercase">v10 · Modular Pro</span>
   </div>
 </div>
 
@@ -774,121 +799,92 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#f0f2f5;color:#0f172a
   </div>
 
   <!-- Invoice Display -->
-  <div class="card p-5 mb-4">
-    <div class="font-bold text-slate-800 text-sm mb-3 flex items-center gap-2"><i data-lucide="sliders" class="w-4 h-4 text-emerald-600"></i> Invoice Amount Display</div>
-    <div class="space-y-2">
-      <label class="toggle-row" onclick="event.stopPropagation()"><label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" id="set-net-excl-gst" onclick="event.stopPropagation()" onchange="window.updateInvoiceUI&&updateInvoiceUI()"><span class="toggle-track"></span></label><div><div class="text-sm font-semibold text-slate-700">Net Payable without GST</div><div class="text-xs text-slate-400">Grand total shows base amount only</div></div></label>
-      <label class="toggle-row" onclick="event.stopPropagation()"><label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" id="set-taxable-excl-gst" onclick="event.stopPropagation()" onchange="window.updateInvoiceUI&&updateInvoiceUI()"><span class="toggle-track"></span></label><div><div class="text-sm font-semibold text-slate-700">Show Taxable Amount (GST excluded)</div><div class="text-xs text-slate-400">Taxable = Net Payable - GST (e.g. 90 = 85.71 + 4.29)</div></div></label>
+  <div class="card p-4 mb-4 cursor-pointer hover:shadow-md transition-shadow" onclick="openSettingsModal('invoice-display')">
+    <div class="flex items-center gap-3">
+      <div class="acc-icon bg-emerald-50"><i data-lucide="sliders" class="w-5 h-5 text-emerald-600"></i></div>
+      <div class="flex-1"><div class="font-bold text-slate-800 text-sm">Invoice Amount Display</div><div class="text-xs text-slate-400 mt-0.5">GST inclusive/exclusive options</div></div>
+      <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
     </div>
   </div>
 
-  <!-- Accordion Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
+  <!-- Settings Grid — modal triggers -->
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-4">
 
-    <!-- Active Modules -->
-    <div class="acc-card" onclick="toggleAcc('acc-modules',this)">
-      <div class="acc-head"><div class="acc-icon bg-emerald-50"><i data-lucide="layout-grid" class="w-5 h-5 text-emerald-600"></i></div><div class="flex-1"><div class="font-bold text-slate-800 text-sm">Active Modules</div><div class="text-xs text-slate-400 mt-0.5">ERP functional units</div></div><i data-lucide="chevron-down" class="w-4 h-4 acc-chevron"></i></div>
-      <div class="acc-body" id="acc-modules">
-        <div class="space-y-2" id="feature-toggles-container">
-          <label class="toggle-row" onclick="event.stopPropagation()"><label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" id="feat-expenses" onclick="event.stopPropagation()"><span class="toggle-track"></span></label><span class="text-sm font-medium text-slate-700">Expense Tracking</span></label>
-          <label class="toggle-row" onclick="event.stopPropagation()"><label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" id="feat-multiDoc" onclick="event.stopPropagation()"><span class="toggle-track"></span></label><span class="text-sm font-medium text-slate-700">Proformas & Quotations</span></label>
-          <label class="toggle-row" onclick="event.stopPropagation()"><label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" id="feat-currency" onclick="event.stopPropagation()"><span class="toggle-track"></span></label><span class="text-sm font-medium text-slate-700">Multi-Currency</span></label>
-          <label class="toggle-row" onclick="event.stopPropagation()"><label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" id="feat-shipping" onclick="event.stopPropagation()"><span class="toggle-track"></span></label><span class="text-sm font-medium text-slate-700">Shipping & PO Fields</span></label>
-          <label class="toggle-row" onclick="event.stopPropagation()"><label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" id="feat-tds" onclick="event.stopPropagation()"><span class="toggle-track"></span></label><span class="text-sm font-medium text-slate-700">TDS Deduction</span></label>
-          <label class="toggle-row" onclick="event.stopPropagation()"><label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" id="feat-rcm" onclick="event.stopPropagation()"><span class="toggle-track"></span></label><span class="text-sm font-medium text-slate-700">Reverse Charge (RCM)</span></label>
-          <label class="toggle-row" onclick="event.stopPropagation()"><label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" id="feat-hsn" onclick="event.stopPropagation()"><span class="toggle-track"></span></label><span class="text-sm font-medium text-slate-700">HSN/SAC Codes</span></label>
-          <label class="toggle-row" onclick="event.stopPropagation()"><label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" id="feat-dueDate" onclick="event.stopPropagation()"><span class="toggle-track"></span></label><span class="text-sm font-medium text-slate-700">Invoice Due Dates</span></label>
-          <label class="toggle-row" onclick="event.stopPropagation()"><label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" id="feat-ledger" onclick="event.stopPropagation()"><span class="toggle-track"></span></label><span class="text-sm font-medium text-slate-700">Client Ledger</span></label>
-          <label class="toggle-row" onclick="event.stopPropagation()"><label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" id="feat-creditNote" onclick="event.stopPropagation()"><span class="toggle-track"></span></label><span class="text-sm font-medium text-slate-700">Credit Notes</span></label>
-          <label class="toggle-row" onclick="event.stopPropagation()"><label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" id="feat-margin" onclick="event.stopPropagation()"><span class="toggle-track"></span></label><span class="text-sm font-medium text-slate-700">Margin Calculator</span></label>
-          <label class="toggle-row" onclick="event.stopPropagation()"><label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" id="feat-batch" onclick="event.stopPropagation()"><span class="toggle-track"></span></label><span class="text-sm font-medium text-slate-700">Batch & Expiry</span></label>
-          <label class="toggle-row" onclick="event.stopPropagation()"><label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" id="feat-deleteBtn" onclick="event.stopPropagation()"><span class="toggle-track"></span></label><span class="text-sm font-medium text-slate-700">Allow Deletion</span></label>
-          <label class="toggle-row" onclick="event.stopPropagation()"><label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" id="feat-stamp" onclick="event.stopPropagation()"><span class="toggle-track"></span></label><span class="text-sm font-medium text-slate-700">Company Seal on PDF</span></label>
-          <label class="toggle-row" onclick="event.stopPropagation()"><label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" id="feat-returnStock" onclick="event.stopPropagation()"><span class="toggle-track"></span></label><span class="text-sm font-medium text-slate-700">Auto-Return Stock</span></label>
-        </div>
-      </div>
+    <div class="card p-4 cursor-pointer hover:shadow-md hover:border-emerald-200 transition-all" onclick="openSettingsModal('inv-numbering')">
+      <div class="acc-icon bg-blue-50 mb-3"><i data-lucide="hash" class="w-5 h-5 text-blue-600"></i></div>
+      <div class="font-bold text-slate-800 text-sm">Invoice Numbering</div>
+      <div class="text-xs text-slate-400 mt-0.5">Prefix, format & style</div>
     </div>
 
-    <!-- Keyboard Hotkeys -->
-    <div class="acc-card" onclick="toggleAcc('acc-hotkeys',this)">
-      <div class="acc-head"><div class="acc-icon bg-purple-50"><i data-lucide="keyboard" class="w-5 h-5 text-purple-600"></i></div><div class="flex-1"><div class="font-bold text-slate-800 text-sm">Keyboard Hotkeys</div><div class="text-xs text-slate-400 mt-0.5">Power-user shortcuts</div></div><i data-lucide="chevron-down" class="w-4 h-4 acc-chevron"></i></div>
-      <div class="acc-body" id="acc-hotkeys"><p class="text-xs text-slate-500 mb-3">Use <strong>Alt + Key</strong> for fast actions.</p><div class="space-y-2" id="shortcuts-toggles-container"></div></div>
+    <div class="card p-4 cursor-pointer hover:shadow-md hover:border-emerald-200 transition-all" onclick="openSettingsModal('modules')">
+      <div class="acc-icon bg-emerald-50 mb-3"><i data-lucide="layout-grid" class="w-5 h-5 text-emerald-600"></i></div>
+      <div class="font-bold text-slate-800 text-sm">Active Modules</div>
+      <div class="text-xs text-slate-400 mt-0.5">ERP functional units</div>
     </div>
 
-    <!-- Security -->
-    <div class="acc-card" onclick="toggleAcc('acc-security',this)">
-      <div class="acc-head"><div class="acc-icon bg-red-50"><i data-lucide="lock" class="w-5 h-5 text-red-500"></i></div><div class="flex-1"><div class="font-bold text-slate-800 text-sm">Security & PIN</div><div class="text-xs text-slate-400 mt-0.5">Auth and access locks</div></div><i data-lucide="chevron-down" class="w-4 h-4 acc-chevron"></i></div>
-      <div class="acc-body" id="acc-security">
-        <div onclick="event.stopPropagation()" class="space-y-3">
-          <label class="toggle-row" onclick="event.stopPropagation();togglePinFields(this.querySelector('input').checked)"><label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" id="set-pin-enable" onclick="event.stopPropagation();window.togglePinFields&&togglePinFields(this.checked)"><span class="toggle-track"></span></label><span class="text-sm font-semibold text-slate-700">Enable PIN Lock</span></label>
-          <div id="pin-fields" class="hidden space-y-3">
-            <div><label class="lbl">Current PIN</label><div class="relative"><input type="password" id="set-pin-current" maxlength="4" class="inp text-center tracking-widest text-lg pr-11" placeholder="****"><button type="button" class="eye-btn absolute right-3 top-1/2 -translate-y-1/2" onclick="toggleEye('set-pin-current',this)"><i data-lucide="eye" class="w-4 h-4"></i></button></div></div>
-            <div><label class="lbl">New PIN</label><div class="relative"><input type="password" id="set-pin-new" maxlength="4" class="inp text-center tracking-widest text-lg pr-11" placeholder="****"><button type="button" class="eye-btn absolute right-3 top-1/2 -translate-y-1/2" onclick="toggleEye('set-pin-new',this)"><i data-lucide="eye" class="w-4 h-4"></i></button></div></div>
-          </div>
-          <div><label class="lbl">FY Lock Date</label><input type="date" id="set-lock-date" class="inp text-sm"></div>
-          <div><label class="lbl">Net Profit Formula</label>
-            <select id="set-profit-formula" class="inp text-sm bg-white" onclick="event.stopPropagation()">
-              <option value="standard">Standard (Revenue - Expenses)</option>
-              <option value="net_tax">Net of Tax</option>
-              <option value="gross">Gross Profit Only</option>
-              <option value="operating">Operating Profit</option>
-              <option value="cash">Cash Basis</option>
-            </select>
-          </div>
-          <button onclick="event.stopPropagation();window.openTrashModal&&openTrashModal()" class="btn btn-ghost btn-sm w-full justify-center"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Recycle Bin</button>
-        </div>
-      </div>
+    <div class="card p-4 cursor-pointer hover:shadow-md hover:border-purple-200 transition-all" onclick="openSettingsModal('hotkeys')">
+      <div class="acc-icon bg-purple-50 mb-3"><i data-lucide="keyboard" class="w-5 h-5 text-purple-600"></i></div>
+      <div class="font-bold text-slate-800 text-sm">Keyboard Hotkeys</div>
+      <div class="text-xs text-slate-400 mt-0.5">Power-user shortcuts</div>
     </div>
 
-    <!-- Bank -->
-    <div class="acc-card" onclick="toggleAcc('acc-bank',this)">
-      <div class="acc-head"><div class="acc-icon bg-blue-50"><i data-lucide="landmark" class="w-5 h-5 text-blue-600"></i></div><div class="flex-1"><div class="font-bold text-slate-800 text-sm">Bank Configuration</div><div class="text-xs text-slate-400 mt-0.5">Payout & UPI</div></div><i data-lucide="chevron-down" class="w-4 h-4 acc-chevron"></i></div>
-      <div class="acc-body" id="acc-bank"><div onclick="event.stopPropagation()" class="space-y-3"><div><label class="lbl">Bank Name</label><input type="text" id="set-bank-name" class="inp text-sm" placeholder="State Bank of India"></div><div class="grid grid-cols-2 gap-3"><div><label class="lbl">Account No.</label><input type="text" id="set-bank-acc" class="inp text-sm"></div><div><label class="lbl">IFSC</label><input type="text" id="set-bank-ifsc" class="inp text-sm"></div></div><div><label class="lbl">UPI ID</label><input type="text" id="set-biz-upi" class="inp text-sm" placeholder="example@upi"></div></div></div>
+    <div class="card p-4 cursor-pointer hover:shadow-md hover:border-red-200 transition-all" onclick="openSettingsModal('security')">
+      <div class="acc-icon bg-red-50 mb-3"><i data-lucide="lock" class="w-5 h-5 text-red-500"></i></div>
+      <div class="font-bold text-slate-800 text-sm">Security & PIN</div>
+      <div class="text-xs text-slate-400 mt-0.5">Auth and access locks</div>
     </div>
 
-    <!-- Visual Branding -->
-    <div class="acc-card" onclick="toggleAcc('acc-branding',this)">
-      <div class="acc-head"><div class="acc-icon bg-amber-50"><i data-lucide="palette" class="w-5 h-5 text-amber-600"></i></div><div class="flex-1"><div class="font-bold text-slate-800 text-sm">Visual Branding</div><div class="text-xs text-slate-400 mt-0.5">Logo, signature & themes</div></div><i data-lucide="chevron-down" class="w-4 h-4 acc-chevron"></i></div>
-      <div class="acc-body" id="acc-branding"><div onclick="event.stopPropagation()" class="space-y-3">
-        <div><label class="lbl">Header Display</label><select id="set-biz-logo-display" class="inp text-sm bg-white"><option value="both">Logo + Name</option><option value="logo">Logo Only</option><option value="name">Name Only</option></select></div>
-        <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100"><div class="w-12 h-12 bg-white border border-slate-200 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0" id="logo-preview"><i data-lucide="image" class="text-slate-300 w-5 h-5"></i></div><div class="flex-1 min-w-0"><label class="lbl">Logo</label><input type="file" accept="image/*" onchange="window.handleImageUpload&&handleImageUpload(event,'logo')" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:bg-emerald-50 file:text-emerald-700"></div></div>
-        <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100"><div class="w-20 h-10 bg-white border border-slate-200 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0" id="sig-preview"><i data-lucide="pen-tool" class="text-slate-300 w-5 h-5"></i></div><div class="flex-1 min-w-0"><label class="lbl">Signature</label><input type="file" accept="image/*" onchange="window.handleImageUpload&&handleImageUpload(event,'signature')" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:bg-emerald-50 file:text-emerald-700"></div></div>
-        <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100"><div class="w-12 h-12 bg-white border border-slate-200 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0" id="seal-preview"><i data-lucide="award" class="text-slate-300 w-5 h-5"></i></div><div class="flex-1 min-w-0"><label class="lbl">Seal</label><input type="file" accept="image/*" onchange="window.handleImageUpload&&handleImageUpload(event,'seal')" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:bg-emerald-50 file:text-emerald-700"></div></div>
-      </div></div>
+    <div class="card p-4 cursor-pointer hover:shadow-md hover:border-blue-200 transition-all" onclick="openSettingsModal('bank')">
+      <div class="acc-icon bg-blue-50 mb-3"><i data-lucide="landmark" class="w-5 h-5 text-blue-600"></i></div>
+      <div class="font-bold text-slate-800 text-sm">Bank Configuration</div>
+      <div class="text-xs text-slate-400 mt-0.5">Payout & UPI</div>
     </div>
 
-    <!-- Invoice & PDF -->
-    <div class="acc-card" onclick="toggleAcc('acc-invoice',this)">
-      <div class="acc-head"><div class="acc-icon bg-slate-100"><i data-lucide="file-text" class="w-5 h-5 text-slate-600"></i></div><div class="flex-1"><div class="font-bold text-slate-800 text-sm">Invoice & PDF</div><div class="text-xs text-slate-400 mt-0.5">Templates & footer</div></div><i data-lucide="chevron-down" class="w-4 h-4 acc-chevron"></i></div>
-      <div class="acc-body" id="acc-invoice"><div onclick="event.stopPropagation()" class="space-y-3">
-        <div><label class="lbl">Footer / T&C</label><textarea id="set-biz-terms" rows="2" class="inp text-sm resize-none" placeholder="Thank you..."></textarea></div>
-        <label class="lbl">PDF Template</label>
-        <div class="grid grid-cols-2 gap-2">
-          <button onclick="window.setTemplate&&setTemplate('modern')" id="tpl-modern" class="p-2.5 border-2 rounded-xl text-center border-slate-200 hover:border-emerald-400 bg-white text-sm font-bold text-slate-700 transition-all">Modern</button>
-          <button onclick="window.setTemplate&&setTemplate('classic')" id="tpl-classic" class="p-2.5 border-2 rounded-xl text-center border-slate-200 hover:border-emerald-400 bg-white text-sm font-bold text-slate-700 transition-all">Classic</button>
-          <button onclick="window.setTemplate&&setTemplate('minimal')" id="tpl-minimal" class="p-2.5 border-2 rounded-xl text-center border-slate-200 hover:border-emerald-400 bg-white text-sm font-bold text-slate-700 transition-all">Minimal</button>
-          <button onclick="window.setTemplate&&setTemplate('compact')" id="tpl-compact" class="p-2.5 border-2 rounded-xl text-center border-slate-200 hover:border-emerald-400 bg-white text-sm font-bold text-slate-700 transition-all">Compact</button>
-          <button onclick="window.setTemplate&&setTemplate('elegant')" id="tpl-elegant" class="p-2.5 border-2 rounded-xl text-center border-slate-200 hover:border-emerald-400 bg-white text-sm font-bold italic text-slate-700 transition-all">Elegant</button>
-          <button onclick="window.setTemplate&&setTemplate('bold')" id="tpl-bold" class="p-2.5 border-2 rounded-xl text-center border-slate-200 hover:border-emerald-400 bg-white text-sm font-black uppercase text-slate-700 transition-all">Bold</button>
-          <button onclick="window.setTemplate&&setTemplate('nature')" id="tpl-nature" class="p-2.5 border-2 rounded-xl text-center border-slate-200 hover:border-emerald-400 bg-white text-sm font-bold text-green-700 transition-all">Nature</button>
-          <button onclick="window.setTemplate&&setTemplate('corporate')" id="tpl-corporate" class="p-2.5 border-2 rounded-xl text-center border-slate-200 hover:border-emerald-400 bg-white text-sm font-bold text-blue-800 transition-all">Corporate</button>
-          <button onclick="window.setTemplate&&setTemplate('ayurveda')" id="tpl-ayurveda" class="p-2.5 border-2 rounded-xl text-center border-emerald-300 hover:border-emerald-500 bg-emerald-50 text-sm font-bold text-emerald-800 transition-all">🌿 Ayurveda</button>
-          <button onclick="window.setTemplate&&setTemplate('premium')" id="tpl-premium" class="p-2.5 border-2 rounded-xl text-center border-amber-300 hover:border-amber-500 bg-amber-50 text-sm font-bold text-amber-800 transition-all">⭐ Premium</button>
-        </div>
-      </div></div>
+    <div class="card p-4 cursor-pointer hover:shadow-md hover:border-amber-200 transition-all" onclick="openSettingsModal('branding')">
+      <div class="acc-icon bg-amber-50 mb-3"><i data-lucide="palette" class="w-5 h-5 text-amber-600"></i></div>
+      <div class="font-bold text-slate-800 text-sm">Visual Branding</div>
+      <div class="text-xs text-slate-400 mt-0.5">Logo, signature & themes</div>
+    </div>
+
+    <div class="card p-4 cursor-pointer hover:shadow-md hover:border-slate-300 transition-all" onclick="openSettingsModal('invoice-pdf')">
+      <div class="acc-icon bg-slate-100 mb-3"><i data-lucide="file-text" class="w-5 h-5 text-slate-600"></i></div>
+      <div class="font-bold text-slate-800 text-sm">Invoice & PDF</div>
+      <div class="text-xs text-slate-400 mt-0.5">Templates & footer</div>
+    </div>
+
+    <div class="card p-4 cursor-pointer hover:shadow-md hover:border-emerald-200 transition-all" onclick="openSettingsModal('profile')">
+      <div class="acc-icon bg-emerald-50 mb-3"><i data-lucide="building-2" class="w-5 h-5 text-emerald-600"></i></div>
+      <div class="font-bold text-slate-800 text-sm">Business Profile</div>
+      <div class="text-xs text-slate-400 mt-0.5">Name, GSTIN, address</div>
     </div>
 
   </div>
 
-  <!-- Business Profile -->
-  <div class="acc-card mb-5" onclick="toggleAcc('acc-profile',this)">
-    <div class="acc-head"><div class="acc-icon bg-emerald-50"><i data-lucide="building-2" class="w-5 h-5 text-emerald-600"></i></div><div class="flex-1"><div class="font-bold text-slate-800 text-sm">Business Profile</div><div class="text-xs text-slate-400 mt-0.5">Name, GSTIN, address</div></div><i data-lucide="chevron-down" class="w-4 h-4 acc-chevron"></i></div>
-    <div class="acc-body" id="acc-profile"><div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" onclick="event.stopPropagation()">
-      <div><label class="lbl">Business Name</label><input type="text" id="set-biz-name" class="inp text-sm"></div>
-      <div><label class="lbl">GSTIN</label><input type="text" id="set-biz-gstin" class="inp text-sm"></div>
-      <div><label class="lbl">Phone</label><input type="text" id="set-biz-phone" class="inp text-sm"></div>
-      <div class="sm:col-span-2 md:col-span-3"><label class="lbl">Address</label><input type="text" id="set-biz-address" class="inp text-sm"></div>
-    </div></div>
+  <!-- Hidden accordion containers (keep original IDs for JS compatibility) -->
+  <div style="display:none">
+    <div id="acc-modules"></div>
+    <div id="acc-hotkeys"><div class="space-y-2" id="shortcuts-toggles-container"></div></div>
+    <div id="acc-security"></div>
+    <div id="acc-bank"></div>
+    <div id="acc-branding"></div>
+    <div id="acc-invoice"></div>
+    <div id="acc-profile"></div>
+    <!-- Hidden inputs for settings (keep for JS) -->
+    <div id="feature-toggles-container">
+      <input type="checkbox" id="feat-expenses"><input type="checkbox" id="feat-multiDoc"><input type="checkbox" id="feat-currency">
+      <input type="checkbox" id="feat-shipping"><input type="checkbox" id="feat-tds"><input type="checkbox" id="feat-rcm">
+      <input type="checkbox" id="feat-hsn"><input type="checkbox" id="feat-dueDate"><input type="checkbox" id="feat-ledger">
+      <input type="checkbox" id="feat-creditNote"><input type="checkbox" id="feat-margin"><input type="checkbox" id="feat-batch">
+      <input type="checkbox" id="feat-deleteBtn"><input type="checkbox" id="feat-stamp"><input type="checkbox" id="feat-returnStock">
+    </div>
+    <input type="text" id="set-biz-name"><input type="text" id="set-biz-gstin"><input type="text" id="set-biz-phone">
+    <input type="text" id="set-biz-address"><input type="text" id="set-bank-name"><input type="text" id="set-bank-acc">
+    <input type="text" id="set-bank-ifsc"><input type="text" id="set-biz-upi"><select id="set-biz-logo-display"></select>
+    <textarea id="set-biz-terms"></textarea><input type="date" id="set-lock-date">
+    <select id="set-profit-formula"></select>
+    <input type="checkbox" id="set-pin-enable"><input type="password" id="set-pin-current"><input type="password" id="set-pin-new">
+    <div id="pin-fields"></div>
+    <input type="checkbox" id="set-net-excl-gst"><input type="checkbox" id="set-taxable-excl-gst">
   </div>
 
   <!-- Firebase Status + Active Sessions Grid -->
@@ -961,6 +957,71 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#f0f2f5;color:#0f172a
 
   <button onclick="window.saveSettings&&saveSettings()" class="btn btn-primary w-full justify-center py-3">
     <i data-lucide="save" class="w-4 h-4"></i> Save All Settings
+  </button>
+</div>
+
+<!-- ===== AI REPORT ===== -->
+<div id="view-ai-report" class="tab">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+    <div>
+      <div class="flex items-center gap-2 mb-1">
+        <h2 class="text-xl font-bold text-slate-800">AI Report</h2>
+        <span class="badge bg-purple-100 text-purple-700 border border-purple-200 text-[10px]">BETA</span>
+      </div>
+      <p class="text-slate-400 text-sm">Generate animated weekly/monthly HTML reports with embedded data</p>
+    </div>
+  </div>
+
+  <!-- Beta notice -->
+  <div class="card p-4 mb-5 border-purple-200 bg-purple-50/50">
+    <div class="flex gap-3">
+      <i data-lucide="sparkles" class="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5"></i>
+      <div>
+        <div class="font-bold text-purple-800 text-sm">Beta Feature</div>
+        <p class="text-purple-700 text-xs mt-0.5">Generates a self-contained HTML file with embedded JSON data, animated charts, and detailed business insights. No external dependencies — open anywhere.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Config card -->
+  <div class="card p-5 mb-5">
+    <div class="font-bold text-slate-800 text-sm mb-4 flex items-center gap-2">
+      <i data-lucide="settings-2" class="w-4 h-4 text-purple-600"></i> Report Configuration
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div>
+        <label class="lbl">Report Type</label>
+        <select id="ai-report-type" class="inp text-sm bg-white">
+          <option value="weekly">Weekly Report</option>
+          <option value="monthly" selected>Monthly Report</option>
+        </select>
+      </div>
+      <div>
+        <label class="lbl">Period</label>
+        <input type="month" id="ai-report-month" class="inp text-sm">
+      </div>
+      <div>
+        <label class="lbl">Week (if weekly)</label>
+        <select id="ai-report-week" class="inp text-sm bg-white">
+          <option value="1">Week 1 (1–7)</option>
+          <option value="2">Week 2 (8–14)</option>
+          <option value="3">Week 3 (15–21)</option>
+          <option value="4">Week 4 (22–31)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats preview -->
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5" id="ai-report-preview-stats">
+    <div class="stat text-center"><div class="text-2xl font-black text-emerald-600" id="airp-revenue">₹0</div><div class="text-xs text-slate-400 mt-1">Revenue</div></div>
+    <div class="stat text-center"><div class="text-2xl font-black text-red-500" id="airp-expenses">₹0</div><div class="text-xs text-slate-400 mt-1">Expenses</div></div>
+    <div class="stat text-center"><div class="text-2xl font-black text-blue-600" id="airp-invoices">0</div><div class="text-xs text-slate-400 mt-1">Invoices</div></div>
+    <div class="stat text-center"><div class="text-2xl font-black text-amber-600" id="airp-clients">0</div><div class="text-xs text-slate-400 mt-1">Unique Clients</div></div>
+  </div>
+
+  <button onclick="window.generateAIReport&&generateAIReport()" class="btn btn-primary w-full justify-center py-3 text-base">
+    <i data-lucide="sparkles" class="w-5 h-5"></i> Generate & Download HTML Report
   </button>
 </div>
 
@@ -2396,6 +2457,7 @@ document.addEventListener('DOMContentLoaded', function() {
             { id: 'inventory', icon: 'box', label: 'Inventory' },
             { id: 'expenses', icon: 'receipt', label: 'Expenses', class: 'feat-expenses' },
             { id: 'clients', icon: 'users', label: 'Clients' }, 
+            { id: 'ai-report', icon: 'sparkles', label: 'AI Report' },
             { id: 'settings', icon: 'settings', label: 'Settings' }
         ];
 
@@ -4555,6 +4617,530 @@ window.handleForgotPin = async function() {
 
 window.showLogin  = function() { if(window.toggleAuthMode) window.toggleAuthMode('login'); };
 window.showSignup = function() { if(window.toggleAuthMode) window.toggleAuthMode('signup'); };
+</script>
+
+<!-- ============================================================
+  SETTINGS MODALS
+============================================================ -->
+<div id="settings-modal" class="modal" onclick="if(event.target===this)closeSettingsModal()">
+  <div class="modal-box max-w-lg w-full">
+    <div class="modal-head">
+      <div class="flex items-center gap-3">
+        <div id="smod-icon" class="w-9 h-9 rounded-xl flex items-center justify-center bg-emerald-50"></div>
+        <div><div id="smod-title" class="font-bold text-slate-800">Settings</div><div id="smod-sub" class="text-xs text-slate-400"></div></div>
+      </div>
+      <button onclick="closeSettingsModal()" class="btn btn-icon btn-ghost"><i data-lucide="x" class="w-4 h-4"></i></button>
+    </div>
+    <div class="modal-body" id="smod-body"></div>
+    <div class="modal-foot">
+      <button onclick="closeSettingsModal()" class="btn btn-ghost">Cancel</button>
+      <button onclick="saveSettingsModal()" class="btn btn-primary"><i data-lucide="save" class="w-4 h-4"></i> Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ================================================================
+// SETTINGS MODAL SYSTEM
+// ================================================================
+var _currentSettingsModal = null;
+
+var _settingsModals = {
+  'invoice-display': {
+    title: 'Invoice Amount Display',
+    sub: 'GST inclusive / exclusive options',
+    icon: 'sliders', iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600',
+    render: function() {
+      var netChecked = document.getElementById('set-net-excl-gst') ? document.getElementById('set-net-excl-gst').checked : false;
+      var taxChecked = document.getElementById('set-taxable-excl-gst') ? document.getElementById('set-taxable-excl-gst').checked : false;
+      return `<div class="space-y-3">
+        <label class="toggle-row"><label class="toggle"><input type="checkbox" id="smod-net-excl-gst" ${netChecked?'checked':''}><span class="toggle-track"></span></label><div><div class="text-sm font-semibold text-slate-700">Net Payable without GST</div><div class="text-xs text-slate-400">Grand total shows base amount only</div></div></label>
+        <label class="toggle-row"><label class="toggle"><input type="checkbox" id="smod-taxable-excl-gst" ${taxChecked?'checked':''}><span class="toggle-track"></span></label><div><div class="text-sm font-semibold text-slate-700">Show Taxable Amount (GST excluded)</div><div class="text-xs text-slate-400">Taxable = Net Payable − GST (e.g. 85.71 + 4.29 = 90)</div></div></label>
+      </div>`;
+    },
+    save: function() {
+      var n = document.getElementById('smod-net-excl-gst'); var t = document.getElementById('smod-taxable-excl-gst');
+      var orig1 = document.getElementById('set-net-excl-gst'); var orig2 = document.getElementById('set-taxable-excl-gst');
+      if(orig1 && n) orig1.checked = n.checked;
+      if(orig2 && t) orig2.checked = t.checked;
+      if(window.updateInvoiceUI) window.updateInvoiceUI();
+    }
+  },
+  'inv-numbering': {
+    title: 'Invoice Numbering Style', sub: 'Prefix, format & auto-counter',
+    icon: 'hash', iconBg: 'bg-blue-50', iconColor: 'text-blue-600',
+    render: function() {
+      var mode = localStorage.getItem('ayur_inv_mode') || 'advanced';
+      return `<div class="space-y-4">
+        <div><label class="lbl">Numbering Mode</label>
+          <select id="smod-inv-mode" class="inp text-sm bg-white">
+            <option value="advanced" ${mode==='advanced'?'selected':''}>Advanced (DEVMMMyy01)</option>
+            <option value="simple" ${mode==='simple'?'selected':''}>Simple (0001, 0002...)</option>
+          </select></div>
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+          <div class="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">Preview</div>
+          <div id="smod-inv-preview" class="text-lg font-black text-emerald-700 font-mono">DEVMAR250001</div>
+        </div>
+        <div class="p-3 bg-blue-50 rounded-xl border border-blue-100">
+          <p class="text-xs text-blue-700"><strong>Advanced:</strong> DEV + Month + Year + Counter (e.g. DEVMAR2501)<br><strong>Simple:</strong> 4-digit counter reset every FY (e.g. 0001)</p>
+        </div>
+      </div>`;
+    },
+    save: function() {
+      var m = document.getElementById('smod-inv-mode');
+      if(m) localStorage.setItem('ayur_inv_mode', m.value);
+    }
+  },
+  'modules': {
+    title: 'Active Modules', sub: 'ERP functional units',
+    icon: 'layout-grid', iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600',
+    render: function() {
+      var feats = (window.AppState && window.AppState.settings && window.AppState.settings.features) || {};
+      var list = [
+        ['expenses','Expense Tracking'],['multiDoc','Proformas & Quotations'],['currency','Multi-Currency'],
+        ['shipping','Shipping & PO Fields'],['tds','TDS Deduction'],['rcm','Reverse Charge (RCM)'],
+        ['hsn','HSN/SAC Codes'],['dueDate','Invoice Due Dates'],['ledger','Client Ledger'],
+        ['creditNote','Credit Notes'],['margin','Margin Calculator'],['batch','Batch & Expiry'],
+        ['deleteBtn','Allow Deletion'],['stamp','Company Seal on PDF'],['returnStock','Auto-Return Stock']
+      ];
+      return '<div class="space-y-2">' + list.map(function(f){
+        var checked = feats[f[0]] !== false;
+        return `<label class="toggle-row"><label class="toggle"><input type="checkbox" data-feat="${f[0]}" id="smod-feat-${f[0]}" ${checked?'checked':''}><span class="toggle-track"></span></label><span class="text-sm font-medium text-slate-700">${f[1]}</span></label>`;
+      }).join('') + '</div>';
+    },
+    save: function() {
+      var feats = {};
+      ['expenses','multiDoc','currency','shipping','tds','rcm','hsn','dueDate','ledger','creditNote','margin','batch','deleteBtn','stamp','returnStock'].forEach(function(k){
+        var el = document.getElementById('smod-feat-'+k); if(el) feats[k] = el.checked;
+        var orig = document.getElementById('feat-'+k); if(orig && el) orig.checked = el.checked;
+      });
+      if(window.AppState) window.AppState.settings.features = Object.assign(window.AppState.settings.features||{}, feats);
+      if(window.applyFeatureVisibility) window.applyFeatureVisibility();
+    }
+  },
+  'hotkeys': {
+    title: 'Keyboard Hotkeys', sub: 'Alt + Key shortcuts',
+    icon: 'keyboard', iconBg: 'bg-purple-50', iconColor: 'text-purple-600',
+    render: function() {
+      var scConfig = (window.AppState && window.AppState.settings && window.AppState.settings.shortcutsConfig) || {};
+      var masterEnabled = (window.AppState && window.AppState.settings && window.AppState.settings.shortcutsEnabled !== false);
+      var rows = Object.entries(scConfig).map(function(e){
+        return `<div class="flex items-center justify-between py-2 border-b border-slate-50">
+          <div class="flex-1 text-sm text-slate-700">${e[1].label||e[0]}</div>
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <kbd class="px-2 py-0.5 bg-slate-100 border border-slate-200 rounded text-[11px] font-mono font-bold text-slate-600">Alt+${e[1].key}</kbd>
+            <label class="toggle" style="width:32px;height:18px"><input type="checkbox" data-sc="${e[0]}" ${e[1].enabled?'checked':''}><span class="toggle-track"></span></label>
+          </div>
+        </div>`;
+      }).join('');
+      return `<div>
+        <label class="toggle-row mb-3"><label class="toggle"><input type="checkbox" id="smod-shortcuts-master" ${masterEnabled?'checked':''}><span class="toggle-track"></span></label><div class="font-bold text-slate-700 text-sm">Enable All Shortcuts</div></label>
+        <div class="max-h-72 overflow-y-auto pr-1">${rows}</div>
+      </div>`;
+    },
+    save: function() {
+      var master = document.getElementById('smod-shortcuts-master');
+      if(master && window.AppState) window.AppState.settings.shortcutsEnabled = master.checked;
+      var masterEl = document.getElementById('set-shortcuts-master'); if(masterEl && master) masterEl.checked = master.checked;
+      var scConfig = (window.AppState && window.AppState.settings && window.AppState.settings.shortcutsConfig) || {};
+      document.querySelectorAll('#smod-body [data-sc]').forEach(function(el){
+        var k = el.dataset.sc; if(scConfig[k]) scConfig[k].enabled = el.checked;
+      });
+    }
+  },
+  'security': {
+    title: 'Security & PIN', sub: 'Auth and access locks',
+    icon: 'lock', iconBg: 'bg-red-50', iconColor: 'text-red-500',
+    render: function() {
+      var s = (window.AppState && window.AppState.settings) || {};
+      var pinEnabled = s.pinEnabled||false;
+      var lockDate = s.lockDate||'';
+      var formula = s.netProfitFormula||'standard';
+      return `<div class="space-y-4">
+        <label class="toggle-row"><label class="toggle"><input type="checkbox" id="smod-pin-enable" ${pinEnabled?'checked':''} onchange="document.getElementById('smod-pin-fields').classList.toggle('hidden',!this.checked)"><span class="toggle-track"></span></label><span class="text-sm font-semibold text-slate-700">Enable PIN Lock</span></label>
+        <div id="smod-pin-fields" class="${pinEnabled?'':'hidden'} space-y-3">
+          <div><label class="lbl">Current PIN</label><div class="relative"><input type="password" id="smod-pin-current" maxlength="4" class="inp text-center tracking-widest text-lg pr-11" placeholder="****"><button type="button" class="eye-btn absolute right-3 top-1/2 -translate-y-1/2" onclick="toggleEye('smod-pin-current',this)"><i data-lucide="eye" class="w-4 h-4"></i></button></div></div>
+          <div><label class="lbl">New PIN</label><div class="relative"><input type="password" id="smod-pin-new" maxlength="4" class="inp text-center tracking-widest text-lg pr-11" placeholder="****"><button type="button" class="eye-btn absolute right-3 top-1/2 -translate-y-1/2" onclick="toggleEye('smod-pin-new',this)"><i data-lucide="eye" class="w-4 h-4"></i></button></div></div>
+        </div>
+        <div><label class="lbl">FY Lock Date</label><input type="date" id="smod-lock-date" value="${lockDate}" class="inp text-sm"></div>
+        <div><label class="lbl">Net Profit Formula</label>
+          <select id="smod-profit-formula" class="inp text-sm bg-white">
+            <option value="standard" ${formula==='standard'?'selected':''}>Standard (Revenue − Expenses)</option>
+            <option value="net_tax" ${formula==='net_tax'?'selected':''}>Net of Tax</option>
+            <option value="gross" ${formula==='gross'?'selected':''}>Gross Profit Only</option>
+            <option value="operating" ${formula==='operating'?'selected':''}>Operating Profit</option>
+            <option value="cash" ${formula==='cash'?'selected':''}>Cash Basis</option>
+          </select>
+        </div>
+        <button onclick="window.openTrashModal&&openTrashModal()" class="btn btn-ghost btn-sm w-full justify-center"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Open Recycle Bin</button>
+      </div>`;
+    },
+    save: function() {
+      var pe = document.getElementById('smod-pin-enable');
+      var pc = document.getElementById('smod-pin-current'); var pn = document.getElementById('smod-pin-new');
+      var ld = document.getElementById('smod-lock-date'); var pf = document.getElementById('smod-profit-formula');
+      var o1 = document.getElementById('set-pin-enable'); if(o1 && pe) o1.checked = pe.checked;
+      var o2 = document.getElementById('set-pin-current'); if(o2 && pc) o2.value = pc.value;
+      var o3 = document.getElementById('set-pin-new'); if(o3 && pn) o3.value = pn.value;
+      var o4 = document.getElementById('set-lock-date'); if(o4 && ld) o4.value = ld.value;
+      var o5 = document.getElementById('set-profit-formula'); if(o5 && pf) o5.value = pf.value;
+    }
+  },
+  'bank': {
+    title: 'Bank Configuration', sub: 'Payout & UPI details',
+    icon: 'landmark', iconBg: 'bg-blue-50', iconColor: 'text-blue-600',
+    render: function() {
+      var s = (window.AppState && window.AppState.settings) || {};
+      return `<div class="space-y-3">
+        <div><label class="lbl">Bank Name</label><input type="text" id="smod-bank-name" value="${s.bankName||''}" class="inp text-sm" placeholder="State Bank of India"></div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="lbl">Account No.</label><input type="text" id="smod-bank-acc" value="${s.bankAcc||''}" class="inp text-sm"></div>
+          <div><label class="lbl">IFSC</label><input type="text" id="smod-bank-ifsc" value="${s.bankIfsc||''}" class="inp text-sm"></div>
+        </div>
+        <div><label class="lbl">UPI ID</label><input type="text" id="smod-biz-upi" value="${s.upi||''}" class="inp text-sm" placeholder="example@upi"></div>
+      </div>`;
+    },
+    save: function() {
+      var map = { 'smod-bank-name':'set-bank-name','smod-bank-acc':'set-bank-acc','smod-bank-ifsc':'set-bank-ifsc','smod-biz-upi':'set-biz-upi' };
+      Object.entries(map).forEach(function(e){ var s=document.getElementById(e[0]); var d=document.getElementById(e[1]); if(s&&d) d.value=s.value; });
+    }
+  },
+  'branding': {
+    title: 'Visual Branding', sub: 'Logo, signature & themes',
+    icon: 'palette', iconBg: 'bg-amber-50', iconColor: 'text-amber-600',
+    render: function() {
+      var s = (window.AppState && window.AppState.settings) || {};
+      var disp = s.logoDisplay||'both';
+      return `<div class="space-y-4">
+        <div><label class="lbl">Header Display</label>
+          <select id="smod-logo-display" class="inp text-sm bg-white">
+            <option value="both" ${disp==='both'?'selected':''}>Logo + Name</option>
+            <option value="logo" ${disp==='logo'?'selected':''}>Logo Only</option>
+            <option value="name" ${disp==='name'?'selected':''}>Name Only</option>
+          </select>
+        </div>
+        <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+          <div class="w-12 h-12 bg-white border border-slate-200 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0" id="logo-preview">${s.logo?`<img src="${s.logo}" class="w-full h-full object-cover">`:'<i data-lucide="image" class="text-slate-300 w-5 h-5"></i>'}</div>
+          <div class="flex-1 min-w-0"><label class="lbl">Logo</label><input type="file" accept="image/*" onchange="window.handleImageUpload&&handleImageUpload(event,'logo')" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:bg-emerald-50 file:text-emerald-700"></div>
+        </div>
+        <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+          <div class="w-20 h-10 bg-white border border-slate-200 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0" id="sig-preview">${s.signature?`<img src="${s.signature}" class="w-full h-full object-contain">`:'<i data-lucide="pen-tool" class="text-slate-300 w-5 h-5"></i>'}</div>
+          <div class="flex-1 min-w-0"><label class="lbl">Signature</label><input type="file" accept="image/*" onchange="window.handleImageUpload&&handleImageUpload(event,'signature')" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:bg-emerald-50 file:text-emerald-700"></div>
+        </div>
+        <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+          <div class="w-12 h-12 bg-white border border-slate-200 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0" id="seal-preview">${s.seal?`<img src="${s.seal}" class="w-full h-full object-contain">`:'<i data-lucide="award" class="text-slate-300 w-5 h-5"></i>'}</div>
+          <div class="flex-1 min-w-0"><label class="lbl">Seal</label><input type="file" accept="image/*" onchange="window.handleImageUpload&&handleImageUpload(event,'seal')" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:bg-emerald-50 file:text-emerald-700"></div>
+        </div>
+      </div>`;
+    },
+    save: function() {
+      var d = document.getElementById('smod-logo-display'); var o = document.getElementById('set-biz-logo-display');
+      if(d && o) o.value = d.value;
+    }
+  },
+  'invoice-pdf': {
+    title: 'Invoice & PDF', sub: 'Templates & footer text',
+    icon: 'file-text', iconBg: 'bg-slate-100', iconColor: 'text-slate-600',
+    render: function() {
+      var s = (window.AppState && window.AppState.settings) || {};
+      var tpl = s.template||'modern';
+      var terms = (s.customTerms||'').replace(/"/g,'&quot;');
+      var tpls = ['modern','classic','minimal','compact','elegant','bold','nature','corporate','ayurveda','premium'];
+      return `<div class="space-y-4">
+        <div><label class="lbl">Footer / T&C</label><textarea id="smod-biz-terms" rows="3" class="inp text-sm resize-none" placeholder="Thank you...">${s.customTerms||''}</textarea></div>
+        <div><label class="lbl">PDF Template</label>
+          <div class="grid grid-cols-2 gap-2 mt-1">
+            ${tpls.map(t => `<button type="button" onclick="window.setTemplate&&setTemplate('${t}');document.querySelectorAll('.smod-tpl-btn').forEach(function(b){b.style.borderColor='';b.style.background='';b.style.color=''});this.style.borderColor='#10b981';this.style.background='#ecfdf5';this.style.color='#065f46'" class="smod-tpl-btn p-2.5 border-2 rounded-xl text-center text-sm font-bold text-slate-700 transition-all border-slate-200 ${t===tpl?'border-emerald-400 bg-emerald-50 text-emerald-800':''}" style="${t===tpl?'border-color:#10b981;background:#ecfdf5;color:#065f46':''}">${t.charAt(0).toUpperCase()+t.slice(1)}</button>`).join('')}
+          </div>
+        </div>
+      </div>`;
+    },
+    save: function() {
+      var t = document.getElementById('smod-biz-terms'); var o = document.getElementById('set-biz-terms');
+      if(t && o) o.value = t.value;
+    }
+  },
+  'profile': {
+    title: 'Business Profile', sub: 'Name, GSTIN, address',
+    icon: 'building-2', iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600',
+    render: function() {
+      var s = (window.AppState && window.AppState.settings) || {};
+      return `<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="sm:col-span-2"><label class="lbl">Business Name</label><input type="text" id="smod-biz-name" value="${s.businessName||''}" class="inp text-sm"></div>
+        <div><label class="lbl">GSTIN</label><input type="text" id="smod-biz-gstin" value="${s.gstin||''}" class="inp text-sm"></div>
+        <div><label class="lbl">Phone</label><input type="text" id="smod-biz-phone" value="${s.phone||''}" class="inp text-sm"></div>
+        <div class="sm:col-span-2"><label class="lbl">Address</label><input type="text" id="smod-biz-address" value="${s.address||''}" class="inp text-sm"></div>
+      </div>`;
+    },
+    save: function() {
+      var map = {'smod-biz-name':'set-biz-name','smod-biz-gstin':'set-biz-gstin','smod-biz-phone':'set-biz-phone','smod-biz-address':'set-biz-address'};
+      Object.entries(map).forEach(function(e){ var s=document.getElementById(e[0]); var d=document.getElementById(e[1]); if(s&&d) d.value=s.value; });
+    }
+  }
+};
+
+window.openSettingsModal = function(key) {
+  var cfg = _settingsModals[key]; if(!cfg) return;
+  _currentSettingsModal = key;
+  var iconEl = document.getElementById('smod-icon');
+  var titleEl = document.getElementById('smod-title');
+  var subEl = document.getElementById('smod-sub');
+  var body = document.getElementById('smod-body');
+  var modal = document.getElementById('settings-modal');
+  if(iconEl) iconEl.className = 'w-9 h-9 rounded-xl flex items-center justify-center ' + cfg.iconBg + ' acc-icon';
+  if(iconEl) iconEl.innerHTML = '<i data-lucide="'+cfg.icon+'" class="w-5 h-5 '+cfg.iconColor+'"></i>';
+  if(titleEl) titleEl.textContent = cfg.title;
+  if(subEl) subEl.textContent = cfg.sub;
+  if(body) body.innerHTML = cfg.render();
+  if(modal) modal.classList.add('open');
+  if(typeof lucide !== 'undefined') lucide.createIcons();
+};
+
+window.closeSettingsModal = function() {
+  var modal = document.getElementById('settings-modal');
+  if(modal) modal.classList.remove('open');
+  _currentSettingsModal = null;
+};
+
+window.saveSettingsModal = function() {
+  if(!_currentSettingsModal) return;
+  var cfg = _settingsModals[_currentSettingsModal];
+  if(cfg && cfg.save) cfg.save();
+  window.closeSettingsModal();
+  // Trigger full save
+  if(window.saveSettings) window.saveSettings();
+  window.showToast && window.showToast('Settings saved! ✅');
+};
+
+// ================================================================
+// AI REPORT GENERATOR
+// ================================================================
+// Init month input
+document.addEventListener('DOMContentLoaded', function() {
+  var m = document.getElementById('ai-report-month');
+  if(m) { var now = new Date(); m.value = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0'); }
+  var typeEl = document.getElementById('ai-report-type');
+  if(typeEl) typeEl.addEventListener('change', updateAIReportPreview);
+  if(m) m.addEventListener('change', updateAIReportPreview);
+  updateAIReportPreview();
+});
+
+function updateAIReportPreview() {
+  var period = getAIReportPeriod();
+  var invs = ((window.AppState&&window.AppState.invoices)||[]).filter(function(i){ return i.status==='final' && i.date && i.date.startsWith(period.prefix); });
+  if(period.weekRange) invs = invs.filter(function(i){ var d=parseInt(i.date.split('-')[2]); return d>=period.weekRange[0] && d<=period.weekRange[1]; });
+  var exps = ((window.AppState&&window.AppState.expenses)||[]).filter(function(e){ return e.date && e.date.startsWith(period.prefix); });
+  if(period.weekRange) exps = exps.filter(function(e){ var d=parseInt(e.date.split('-')[2]); return d>=period.weekRange[0] && d<=period.weekRange[1]; });
+  var rev = invs.reduce(function(s,i){ return s+Number(i.grandTotal||0); }, 0);
+  var exp = exps.reduce(function(s,e){ return s+Number(e.amount||0); }, 0);
+  var clients = [...new Set(invs.map(function(i){ return i.client&&i.client.name; }).filter(Boolean))];
+  var fmt = function(n){ return '₹'+Number(n).toLocaleString('en-IN',{minimumFractionDigits:0,maximumFractionDigits:0}); };
+  var setText = function(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; };
+  setText('airp-revenue', fmt(rev)); setText('airp-expenses', fmt(exp));
+  setText('airp-invoices', invs.length); setText('airp-clients', clients.length);
+}
+
+function getAIReportPeriod() {
+  var type = (document.getElementById('ai-report-type')||{}).value || 'monthly';
+  var month = (document.getElementById('ai-report-month')||{}).value || new Date().toISOString().slice(0,7);
+  var week = parseInt((document.getElementById('ai-report-week')||{}).value || '1');
+  var weekRanges = [[1,7],[8,14],[15,21],[22,31]];
+  return {
+    type: type, prefix: month, month: month,
+    weekRange: type==='weekly' ? weekRanges[week-1] : null,
+    label: type==='weekly' ? (month + ' Week ' + week) : month
+  };
+}
+
+window.generateAIReport = function() {
+  var period = getAIReportPeriod();
+  var allInvs = (window.AppState&&window.AppState.invoices)||[];
+  var invs = allInvs.filter(function(i){ return i.status==='final' && i.date && i.date.startsWith(period.prefix); });
+  if(period.weekRange) invs = invs.filter(function(i){ var d=parseInt(i.date.split('-')[2]); return d>=period.weekRange[0] && d<=period.weekRange[1]; });
+  var exps = ((window.AppState&&window.AppState.expenses)||[]).filter(function(e){ return e.date && e.date.startsWith(period.prefix); });
+  if(period.weekRange) exps = exps.filter(function(e){ var d=parseInt(e.date.split('-')[2]); return d>=period.weekRange[0] && d<=period.weekRange[1]; });
+  var products = (window.AppState&&window.AppState.products)||[];
+  var s = (window.AppState&&window.AppState.settings)||{};
+  var bizName = s.businessName || 'My Business';
+
+  var rev = invs.reduce(function(sum,i){ return sum+Number(i.grandTotal||0); },0);
+  var exp = exps.reduce(function(sum,e){ return sum+Number(e.amount||0); },0);
+  var profit = rev - exp;
+  var tax = invs.reduce(function(sum,i){ return sum+Number(i.totalTax||0); },0);
+  var paid = invs.filter(function(i){ return i.paymentStatus==='paid'; }).reduce(function(s,i){ return s+Number(i.grandTotal||0); },0);
+  var unpaid = rev - paid;
+  var clientSet = [...new Set(invs.map(function(i){ return i.client&&i.client.name; }).filter(Boolean))];
+
+  // Daily revenue for chart
+  var days = {}; invs.forEach(function(i){ if(i.date) days[i.date] = (days[i.date]||0)+Number(i.grandTotal||0); });
+  var dayLabels = Object.keys(days).sort(); var dayData = dayLabels.map(function(d){ return days[d]; });
+
+  // Top products
+  var prodMap = {}; invs.forEach(function(i){ (i.items||[]).forEach(function(it){ prodMap[it.name]=(prodMap[it.name]||0)+Number(it.qty||0); }); });
+  var topProds = Object.entries(prodMap).sort(function(a,b){ return b[1]-a[1]; }).slice(0,8);
+
+  // Category expenses
+  var catMap = {}; exps.forEach(function(e){ catMap[e.category]=(catMap[e.category]||0)+Number(e.amount||0); });
+  var catLabels = Object.keys(catMap); var catData = catLabels.map(function(c){ return catMap[c]; });
+
+  // Payment mode split
+  var upiAmt = invs.filter(function(i){ return i.paymentMode==='upi'; }).reduce(function(s,i){ return s+Number(i.grandTotal||0); },0);
+  var cashAmt = invs.filter(function(i){ return i.paymentMode==='cash'; }).reduce(function(s,i){ return s+Number(i.grandTotal||0); },0);
+  var creditAmt = invs.filter(function(i){ return i.paymentMode==='credit'; }).reduce(function(s,i){ return s+Number(i.grandTotal||0); },0);
+
+  var fmt = function(n){ return '₹'+Number(n).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2}); };
+  var now = new Date().toLocaleString('en-IN');
+
+  // Embedded JSON data
+  var reportData = { bizName, period: period.label, generatedAt: now, revenue: rev, expenses: exp, profit, tax, paid, unpaid, invoiceCount: invs.length, clientCount: clientSet.length, topProducts: topProds, paymentSplit: {upi:upiAmt, cash:cashAmt, credit:creditAmt}, dailyRevenue: {labels:dayLabels,data:dayData}, expenseCategories: {labels:catLabels,data:catData} };
+
+  var html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${bizName} — ${period.label} Report</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"><\/script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;color:#1e293b}
+.hero{background:linear-gradient(135deg,#064e3b,#0d1117);color:white;padding:48px 32px;text-align:center}
+.hero h1{font-size:2.2rem;font-weight:900;letter-spacing:-.5px}
+.hero p{color:#6ee7b7;font-size:.9rem;margin-top:8px}
+.badge{display:inline-block;background:rgba(16,185,129,.2);border:1px solid rgba(16,185,129,.4);color:#6ee7b7;padding:4px 14px;border-radius:20px;font-size:.75rem;font-weight:700;margin-top:12px}
+.container{max-width:1100px;margin:0 auto;padding:32px 16px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:32px}
+.stat{background:white;border-radius:16px;padding:24px 20px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.06);animation:fadeUp .5s ease both}
+.stat .val{font-size:1.6rem;font-weight:900;margin-bottom:4px}
+.stat .lbl{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8}
+.green{color:#059669}.red{color:#dc2626}.blue{color:#2563eb}.amber{color:#d97706}.purple{color:#7c3aed}
+.section{background:white;border-radius:16px;padding:24px;margin-bottom:24px;box-shadow:0 2px 16px rgba(0,0,0,.06);animation:fadeUp .5s ease both}
+.section h2{font-size:1rem;font-weight:800;color:#0f172a;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.chart-wrap{position:relative;height:260px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.top-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-radius:10px;margin-bottom:8px;background:#f8fafc;border:1px solid #f1f5f9;font-size:.85rem}
+.top-row .name{font-weight:600;color:#334155}
+.top-row .qty{font-weight:800;color:#059669;background:#ecfdf5;padding:3px 10px;border-radius:20px;font-size:.78rem}
+.insight{background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid #bfdbfe;border-radius:14px;padding:16px;margin-bottom:12px}
+.insight .title{font-weight:800;color:#1d4ed8;font-size:.85rem;margin-bottom:4px}
+.insight p{color:#3730a3;font-size:.82rem;line-height:1.5}
+.footer{text-align:center;padding:32px;color:#94a3b8;font-size:.78rem}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="badge">🌿 My Business ERP</div>
+  <h1>${bizName}</h1>
+  <p>${period.type === 'weekly' ? 'Weekly' : 'Monthly'} Business Report — ${period.label}</p>
+  <p style="color:#475569;font-size:.78rem;margin-top:8px">Generated: ${now}</p>
+</div>
+
+<div class="container">
+
+  <!-- KPI Stats -->
+  <div class="stats">
+    <div class="stat" style="animation-delay:.05s"><div class="val green">${fmt(rev)}</div><div class="lbl">Revenue</div></div>
+    <div class="stat" style="animation-delay:.1s"><div class="val red">${fmt(exp)}</div><div class="lbl">Expenses</div></div>
+    <div class="stat" style="animation-delay:.15s"><div class="val ${profit>=0?'green':'red'}">${fmt(profit)}</div><div class="lbl">Net Profit</div></div>
+    <div class="stat" style="animation-delay:.2s"><div class="val blue">${invs.length}</div><div class="lbl">Invoices</div></div>
+    <div class="stat" style="animation-delay:.25s"><div class="val amber">${clientSet.length}</div><div class="lbl">Clients</div></div>
+    <div class="stat" style="animation-delay:.3s"><div class="val purple">${fmt(tax)}</div><div class="lbl">GST Collected</div></div>
+    <div class="stat" style="animation-delay:.35s"><div class="val green">${fmt(paid)}</div><div class="lbl">Collected</div></div>
+    <div class="stat" style="animation-delay:.4s"><div class="val red">${fmt(unpaid)}</div><div class="lbl">Outstanding</div></div>
+  </div>
+
+  <!-- Daily Revenue Chart -->
+  ${dayLabels.length > 0 ? `
+  <div class="section" style="animation-delay:.2s">
+    <h2>📈 Daily Revenue Trend</h2>
+    <div class="chart-wrap"><canvas id="dailyChart"></canvas></div>
+  </div>` : ''}
+
+  <div class="grid2">
+    <!-- Payment Split -->
+    <div class="section" style="animation-delay:.25s">
+      <h2>💳 Payment Mode Split</h2>
+      <div class="chart-wrap"><canvas id="payChart"></canvas></div>
+    </div>
+    <!-- Expense Categories -->
+    ${catLabels.length > 0 ? `<div class="section" style="animation-delay:.3s">
+      <h2>🏷️ Expense Breakdown</h2>
+      <div class="chart-wrap"><canvas id="expChart"></canvas></div>
+    </div>` : '<div></div>'}
+  </div>
+
+  <!-- Top Products -->
+  ${topProds.length > 0 ? `
+  <div class="section" style="animation-delay:.35s">
+    <h2>🏆 Top Selling Products</h2>
+    ${topProds.map(function(p,i){ return `<div class="top-row"><span class="name">${i+1}. ${p[0]}</span><span class="qty">${p[1]} sold</span></div>`; }).join('')}
+  </div>` : ''}
+
+  <!-- Insights -->
+  <div class="section" style="animation-delay:.4s">
+    <h2>💡 Key Insights</h2>
+    ${profit >= 0 ? `<div class="insight"><div class="title">✅ Profitable Period</div><p>Net profit of ${fmt(profit)} — margin ${rev>0?((profit/rev)*100).toFixed(1):0}% on revenue of ${fmt(rev)}.</p></div>` : `<div class="insight" style="background:linear-gradient(135deg,#fef2f2,#fee2e2);border-color:#fecaca"><div class="title" style="color:#dc2626">⚠️ Loss Period</div><p style="color:#991b1b">Expenses exceeded revenue by ${fmt(Math.abs(profit))}. Review expense categories.</p></div>`}
+    ${unpaid > 0 ? `<div class="insight"><div class="title">📋 Outstanding Dues</div><p>${fmt(unpaid)} pending collection from ${invs.filter(function(i){ return i.paymentStatus!=='paid'; }).length} unpaid invoices.</p></div>` : ''}
+    ${topProds.length > 0 ? `<div class="insight"><div class="title">⭐ Best Seller</div><p>${topProds[0][0]} was your top product with ${topProds[0][1]} units sold.</p></div>` : ''}
+  </div>
+
+  <!-- Embedded JSON data -->
+  <div class="section" style="animation-delay:.45s">
+    <h2>🗄️ Raw Data (JSON)</h2>
+    <pre style="background:#0f172a;color:#6ee7b7;padding:16px;border-radius:12px;overflow-x:auto;font-size:.72rem;max-height:200px;overflow-y:auto">${JSON.stringify(reportData, null, 2)}</pre>
+  </div>
+
+</div>
+
+<div class="footer">Generated by My Business ERP · ${now} · Confidential</div>
+
+<script>
+var data = ${JSON.stringify(reportData)};
+${dayLabels.length > 0 ? `
+new Chart(document.getElementById('dailyChart'), {
+  type:'bar',
+  data:{ labels:data.dailyRevenue.labels.map(function(d){ return d.slice(5); }), datasets:[{ label:'Revenue (₹)', data:data.dailyRevenue.data, backgroundColor:'#059669', borderRadius:6 }] },
+  options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{beginAtZero:true,grid:{display:false}}, x:{grid:{display:false}} } }
+});` : ''}
+new Chart(document.getElementById('payChart'), {
+  type:'doughnut',
+  data:{ labels:['UPI/Bank','Cash','Credit'], datasets:[{ data:[data.paymentSplit.upi,data.paymentSplit.cash,data.paymentSplit.credit], backgroundColor:['#3b82f6','#22c55e','#f59e0b'], borderWidth:0 }] },
+  options:{ responsive:true, maintainAspectRatio:false, cutout:'65%', plugins:{legend:{position:'bottom'}} }
+});
+${catLabels.length > 0 ? `
+new Chart(document.getElementById('expChart'), {
+  type:'pie',
+  data:{ labels:data.expenseCategories.labels, datasets:[{ data:data.expenseCategories.data, backgroundColor:['#ef4444','#f97316','#eab308','#8b5cf6','#06b6d4','#ec4899'], borderWidth:0 }] },
+  options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom'}} }
+});` : ''}
+<\/script>
+</body>
+</html>`;
+
+  // Download as HTML file
+  var blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a'); a.href=url;
+  a.download = bizName.replace(/\s+/g,'_') + '_Report_' + period.label.replace(/\s+/g,'_') + '.html';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 2000);
+  window.showToast && window.showToast('Report downloaded! ✅ Open in any browser.');
+};
+
+// Update preview when switching to AI report tab
+var _origSwitchTab = window.switchTab;
+// Patch after page load
+setTimeout(function(){
+  if(window.switchTab && !window.switchTab._airPatch) {
+    window.switchTab._airPatch = true;
+    var orig = window.switchTab;
+    window.switchTab = function(tabId) {
+      orig(tabId);
+      if(tabId === 'ai-report') { updateAIReportPreview(); if(typeof lucide!=='undefined') lucide.createIcons(); }
+    };
+  }
+}, 500);
 </script>
 </body>
 </html>
