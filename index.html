@@ -2779,7 +2779,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Modifying listeners to split Data securely into Active vs Deleted
             window.unsubProducts = onSnapshot(collection(db, 'artifacts', appId, 'users', uid, 'products'), (snap) => { 
-                incReads(snap.docs.length);
+                if(window._incReads) window._incReads(snap.docs.length);
                 const all = snap.docs.map(d => ({id: d.id, ...d.data()})); 
                 window.AppState.products = all.filter(p => !p.isDeleted);
                 window.AppState.deletedProducts = all.filter(p => p.isDeleted);
@@ -2789,7 +2789,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }, (err) => { console.error("Products Listener Error:", err); window._handleQuotaError(err); });
 
             window.unsubClients = onSnapshot(collection(db, 'artifacts', appId, 'users', uid, 'clients'), (snap) => { 
-                incReads(snap.docs.length);
+                if(window._incReads) window._incReads(snap.docs.length);
                 const all = snap.docs.map(d => ({id: d.id, ...d.data()})); 
                 window.AppState.clients = all.filter(c => !c.isDeleted);
                 window.AppState.deletedClients = all.filter(c => c.isDeleted);
@@ -2798,7 +2798,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }, (err) => { console.error("Clients Listener Error:", err); window._handleQuotaError(err); });
 
             window.unsubInvoices = onSnapshot(collection(db, 'artifacts', appId, 'users', uid, 'invoices'), (snap) => { 
-                incReads(snap.docs.length);
+                if(window._incReads) window._incReads(snap.docs.length);
                 const all = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => b.createdAt - a.createdAt); 
                 window.AppState.invoices = all.filter(i => !i.isDeleted);
                 window.AppState.deletedInvoices = all.filter(i => i.isDeleted);
@@ -2814,7 +2814,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }, (err) => { console.error("Invoices Listener Error:", err); window._handleQuotaError(err); });
 
             window.unsubExpenses = onSnapshot(collection(db, 'artifacts', appId, 'users', uid, 'expenses'), (snap) => {
-                incReads(snap.docs.length);
+                if(window._incReads) window._incReads(snap.docs.length);
                 const all = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => new Date(b.date) - new Date(a.date));
                 window.AppState.expenses = all.filter(e => !e.isDeleted);
                 window.AppState.deletedExpenses = all.filter(e => e.isDeleted);
@@ -2825,7 +2825,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }, (err) => { console.error("Expenses Listener Error:", err); window._handleQuotaError(err); });
 
             window.unsubSettings = onSnapshot(doc(db, 'artifacts', appId, 'users', uid, 'config', 'settings'), (docSnap) => {
-                incReads(1);
+                if(window._incReads) window._incReads(1);
                 if (docSnap.exists()) { 
                     window.AppState.settings = { ...window.AppState.settings, ...docSnap.data() }; 
                     safeLocalSave();
